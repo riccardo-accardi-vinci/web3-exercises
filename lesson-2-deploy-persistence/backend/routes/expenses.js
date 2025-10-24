@@ -6,25 +6,32 @@ const router = express.Router();
 const expensesFilePath = path.join(__dirname, '../data/expenses.json');
 const service = require('../services/expenses');
 
-router.get('/expenses', (req, res) => {
-    const expenses = service.getAllExpenses();
-    if (expenses) {
+router.get('/expenses', async (req, res) => {
+    try {
+        const expenses = await service.getAllExpenses();
         res.status(200).json(expenses);
-    } else {
-        res.status(500).json({ error: 'Failed to retrieve expenses data' });
+    } catch (err) {
+        res.status(500).json({ error: err.message || 'Failed to retrieve expenses data' });
     }
 });
 
-router.post('/expenses', (req, res) => {
-    const newExpense = req.body;
-    service.addExpense(newExpense);
-    res.status(201).json(newExpense);
+router.post('/expenses', async (req, res) => {
+    try {
+        const newExpense = await service.addExpense(req.body);
+        res.status(201).json(newExpense);
+    } catch (err) {
+        res.status(400).json({ error: err.message || 'Failed to create expense' });
+    }
 });
 
-router.post('/expenses/reset', (req, res) => {
-    const initialExpenses = [];
-    service.resetExpenses(expensesFilePath, initialExpenses);
-    res.status(200).json({ message: 'Expenses data has been reset' });
+router.post('/expenses/reset', async (req, res) => {
+    try {
+        await service.resetExpenses();
+        res.status(200).json({ message: 'Expenses data has been reset' });
+    } catch (err) {
+        console.error('Error in POST /expenses/reset:', err);
+        res.status(500).json({ error: err && err.message ? err.message : 'Failed to reset expenses data' });
+    }
 });
 
 module.exports = router;

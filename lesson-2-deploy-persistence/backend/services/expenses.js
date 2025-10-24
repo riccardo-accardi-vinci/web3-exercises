@@ -31,7 +31,8 @@ async function resetExpenses(){
     const populate = require('../db-populate');
     await populate.main();
   } catch (err) {
-    throw new Error('Failed to reset expenses data');
+    console.error('resetExpenses failed:', err);
+    throw err;
   }
 }
 

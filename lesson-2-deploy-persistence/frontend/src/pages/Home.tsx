@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import ExpenseItem from '../components/ExpenseItem';
 import type { Expense } from '../types/Expenses';
 import { useState } from 'react';
 import ExpenseAdd from '../components/ExpenseAdd';
 import ExpenseReset from '../components/ExpenseReset';
-const host = import.meta.env.VITE_API_URL || 'http://unknown-api-url.com';
+const host = import.meta.env.VITE_API_URL;
 
 const Home: React.FC = () => {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -23,10 +22,28 @@ const Home: React.FC = () => {
     }, []);
 
     const refresh = async () => {
-    const res = await fetch(`${host}/api/expenses`);
-    setExpenses(await res.json());
+        const res = await fetch(`${host}/api/expenses`);
+        setExpenses(await res.json());
+    };
+
+    const handleSubmit = async (newExpense: Omit<Expense, 'id'>) => {
+        console.log('Submitting new expense:', newExpense);
+    const res = await fetch(`${host}/api/expenses`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newExpense),
+    });
+    if (!res.ok) throw new Error("POST failed");
+    refresh();
   };
 
+  const handleReset = async () => {
+    const res = await fetch(`${host}/api/expenses/reset`, {
+      method: "POST",
+    });
+    if (!res.ok) throw new Error("Reset failed");
+    refresh();
+  }
 
     return (
         <div>
@@ -34,8 +51,8 @@ const Home: React.FC = () => {
             {expenses.map((expense) => (
                 <ExpenseItem key={expense.id} item={expense} />
             ))}
-            <ExpenseAdd onCreated={refresh} />
-            <ExpenseReset handleReset={refresh} />
+            <ExpenseAdd onSubmit={handleSubmit} />
+            <ExpenseReset handleReset={handleReset} />
         </div>
     );
 };
