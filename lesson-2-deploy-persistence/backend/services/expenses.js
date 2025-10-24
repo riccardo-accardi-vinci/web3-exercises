@@ -2,36 +2,37 @@
 const fs = require('fs');
 const path = require('path');
 const expensesFilePath = path.join(__dirname, '../data/expenses.json');
+const { PrismaClient } = require("../generated/prisma");
+const prisma = new PrismaClient();
 
-function getAllExpenses() {
+async function getAllExpenses() {
   try {
-    const data = fs.readFileSync(expensesFilePath, 'utf8');
-    return JSON.parse(data);
+    const expenses = await prisma.expense.findMany();
+    return expenses;
   } catch (err) {
     throw new Error('Failed to read or parse expenses data');
   }
 }
 
-function addExpense(expense) {
+async function addExpense(expense) {
   try {
-    const data = fs.readFileSync(expensesFilePath, 'utf8');
-    const expenses = JSON.parse(data);
-    expenses.push(expense);
-    fs.writeFileSync(expensesFilePath, JSON.stringify(expenses, null, 2));
-    return expense;
+    const newExpense = await prisma.expense.create({
+      data: expense,
+    });
+    return newExpense;
   } catch (err) {
-    throw new Error('Failed to read/write expenses data');
+    throw new Error('Failed to read or parse expenses data');
   }
 }
 
-function resetExpenses() {
-    try {
-        const initialData = fs.readFileSync(path.join(__dirname, '../data/expenses.init.json'), 'utf8');
-        fs.writeFileSync(expensesFilePath, initialData);
-        return JSON.parse(initialData);
-    } catch (err) {
-       throw new Error('Failed to reset expenses data');
-    }
+async function resetExpenses(){
+  try {
+    await prisma.expense.deleteMany({});
+    const populate = require('../db-populate');
+    await populate.main();
+  } catch (err) {
+    throw new Error('Failed to reset expenses data');
+  }
 }
 
 module.exports = {
