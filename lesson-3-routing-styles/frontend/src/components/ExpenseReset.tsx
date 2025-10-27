@@ -1,5 +1,6 @@
 import React from 'react';
 import { toast } from "react-toastify";
+import { Button } from './ui/button';
 
 const ExpenseReset: React.FC<{ handleReset: () => void }> = ({ handleReset }) => {
     const onReset = async (e: React.FormEvent) => {
@@ -10,7 +11,7 @@ const ExpenseReset: React.FC<{ handleReset: () => void }> = ({ handleReset }) =>
 
     return (
         <form onSubmit={onReset}>
-            <button type="submit">Reset</button>
+            <Button type="submit">Reset</Button>
         </form>
     );
 };

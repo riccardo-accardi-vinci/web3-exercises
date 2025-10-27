@@ -1,9 +1,17 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import ExpenseItem from "../components/ExpenseItem";
 import type { Expense } from "../types/Expenses";
 import { useState, useEffect } from "react";
 import ExpenseReset from "../components/ExpenseReset";
 import NavBar from "../components/NavBar";
+import {
+    Table,
+    TableHeader,
+    TableBody,
+    TableRow,
+    TableHead,
+    TableCell,
+} from "@/components/ui/table";
+import ExpenseItem from "@/components/ExpenseItem";
+
 const host = import.meta.env.VITE_API_URL;
 
 const List = () => {
@@ -38,13 +46,29 @@ const List = () => {
     };
 
     return (
-    <>
-    <div className= "mx-auto centered-container">
-    <NavBar />  
-            {expenses.map((expense) => (
+        <>
+            <div className="mx-auto centered-container">
+                <NavBar />
+
+                 <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left">Id</TableHead>
+                <TableHead className="text-left">Date</TableHead>
+                <TableHead className="text-left">Description</TableHead>
+                <TableHead className="text-left">Payer</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {expenses.map((expense: Expense) => (
                 <ExpenseItem key={expense.id} item={expense} />
-            ))}
-            <ExpenseReset handleReset={handleReset} />
+              ))}
+            </TableBody>
+          </Table>
+                <div className="mt-4">
+                    <ExpenseReset handleReset={handleReset} />
+                </div>
             </div>
         </>
     );

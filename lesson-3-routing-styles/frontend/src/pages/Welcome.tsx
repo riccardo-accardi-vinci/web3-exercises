@@ -1,23 +1,27 @@
 
-import { NavLink, useNavigate } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import { NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 
 
 
 const Welcome= ()=> {
-    const navigate = useNavigate();
     return (
-        <>
-        <div className= "mx-auto centered-container">
-        <NavBar />
-        <div style={{ textAlign: "center" }}>
-            <h1>Welcome to the Expense Tracker</h1>
-            <NavLink onClick={() => navigate('/add')} to={"/add"}>Add New Expense</NavLink> <> | </>
-            <NavLink onClick={() => navigate('/list')} to={"/list"}>View Expense List</NavLink>
-            </div>
-            </div>
-        </>
+       <div className="text-center">
+        <h1 className="text-5xl">Welcome to the Expense Tracker</h1>
+        <div className="text-center py-12">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua.
+        </div>
+        <div className="flex flex-row gap-4 justify-center flex-wrap">
+          <Button asChild className="bg-green-800 text-white hover:bg-green-700 rounded-full px-6">
+            <NavLink to="/list">View Expenses</NavLink>
+          </Button>
+          <Button asChild className="bg-green-800 text-white hover:bg-green-700 rounded-full px-6">
+            <NavLink to="/add">Add Expense</NavLink>
+          </Button>
+        </div>
+      </div>
     );
 };
 

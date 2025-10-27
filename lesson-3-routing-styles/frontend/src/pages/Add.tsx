@@ -19,14 +19,11 @@ const Add = () => {
     if (!res.ok) throw new Error("POST failed");
     navigate('/list');
   };
-  //Use the Layout to make sure every page runs into a centered div with some margins on both sides (a good base for non mobile use case is to devote 1280px to the main content - text is not easy to read on very long lines)
 
     return (
         <>
-        <div className= "mx-auto centered-container">
         <NavBar />
-                    <ExpenseAdd onSubmit={handleSubmit} />
-                    </div>
+        <ExpenseAdd onSubmit={handleSubmit} />
         </>
     )
 }
