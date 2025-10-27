@@ -1,14 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import ExpenseItem from "../components/ExpenseItem";
 import type { Expense } from "../types/Expenses";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import ExpenseReset from "../components/ExpenseReset";
-import { PageContext } from "../App";
+import NavBar from "../components/NavBar";
 const host = import.meta.env.VITE_API_URL;
 
 const List = () => {
     const [expenses, setExpenses] = useState<Expense[]>([]);
-    const { setCurrentPage } = useContext(PageContext);
 
     useEffect(() => {
         const fetchExpenses = async () => {
@@ -39,12 +38,14 @@ const List = () => {
     };
 
     return (
-        <>
-        <button onClick={() => setCurrentPage("Welcome")} style={{ position: "absolute", top: 10, left: 10 }}>Back to Welcome</button>
+    <>
+    <div className= "mx-auto centered-container">
+    <NavBar />  
             {expenses.map((expense) => (
                 <ExpenseItem key={expense.id} item={expense} />
             ))}
             <ExpenseReset handleReset={handleReset} />
+            </div>
         </>
     );
 };

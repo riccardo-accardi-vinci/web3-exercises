@@ -1,15 +1,15 @@
-import { useContext } from "react";
-import { PageContext } from "../App";
+/* eslint-disable react-hooks/rules-of-hooks */
 import ExpenseAdd from "../components/ExpenseAdd";
 import type { Expense } from "../types/Expenses";
+import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
 const host = import.meta.env.VITE_API_URL;
 
-const refresh = async () => {
-    const res = await fetch(`${host}/api/expenses`);
-    return await res.json();
-};
 
- const handleSubmit = async (newExpense: Omit<Expense, 'id'>) => {
+const Add = () => {
+    const navigate = useNavigate();
+
+     const handleSubmit = async (newExpense: Omit<Expense, 'id'>) => {
         console.log('Submitting new expense:', newExpense);
     const res = await fetch(`${host}/api/expenses`, {
       method: "POST",
@@ -17,16 +17,17 @@ const refresh = async () => {
       body: JSON.stringify(newExpense),
     });
     if (!res.ok) throw new Error("POST failed");
-    refresh();
+    navigate('/list');
   };
+  //Use the Layout to make sure every page runs into a centered div with some margins on both sides (a good base for non mobile use case is to devote 1280px to the main content - text is not easy to read on very long lines)
 
-const Add = () => {
-    const { setCurrentPage } = useContext(PageContext);
     return (
         <>
-                <button onClick={() => setCurrentPage("Welcome")} style={{ position: "absolute", top: 10, left: 10 }}>Back to Welcome</button>
+        <div className= "mx-auto centered-container">
+        <NavBar />
                     <ExpenseAdd onSubmit={handleSubmit} />
-                    </>
+                    </div>
+        </>
     )
 }
 

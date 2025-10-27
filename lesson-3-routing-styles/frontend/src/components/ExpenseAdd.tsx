@@ -24,11 +24,12 @@ function ExpenseAdd({ onSubmit }: ExpenseAddProps) {
     await onSubmit(payload);
     reset();
   };
+//Same with the form - make each element on its own line with proper label alignment and that the add button is more visible
 
   return (
-    <form onSubmit={handleSubmit(submitHandler)}>
+    <form onSubmit={handleSubmit(submitHandler)} className= "flex flex-col space-y-4 p-4">
       <label>
-        Payer
+        Payer : 
         <select {...register("payer", { required: true })}>
           <option value="">Select payer</option>
           <option value="Alice">Alice</option>
@@ -37,12 +38,12 @@ function ExpenseAdd({ onSubmit }: ExpenseAddProps) {
       </label>
 
       <label>
-        Date
+        Date : 
         <input type="date" {...register("date")} />
       </label>
       <br />
       <label>
-        Description
+        Description : 
         <input
           type="text"
           {...register("description", { required: true })}
@@ -51,7 +52,7 @@ function ExpenseAdd({ onSubmit }: ExpenseAddProps) {
       </label>
 
       <label>
-        Amount
+        Amount : 
         <input
           type="number"
           step="0.01"
@@ -61,7 +62,7 @@ function ExpenseAdd({ onSubmit }: ExpenseAddProps) {
         {errors.amount && <span>Amount field is required</span>}
       </label>
       <br />
-      <button type="submit">Add</button>
+      <button type="submit" className="bg-green-500 text-white p-2 rounded">Add</button>
     </form>
   );
 }
