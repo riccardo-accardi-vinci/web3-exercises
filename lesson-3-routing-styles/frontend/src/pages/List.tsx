@@ -8,7 +8,6 @@ import {
     TableBody,
     TableRow,
     TableHead,
-    TableCell,
 } from "@/components/ui/table";
 import ExpenseItem from "@/components/ExpenseItem";
 
