@@ -1,50 +1,30 @@
-import { NavLink } from "react-router-dom";
-import {
-    NavigationMenu,
-    NavigationMenuList,
-    NavigationMenuItem,
-    NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
-import { Button } from "@/components/ui/button";
+import { NavLink, useLocation } from 'react-router';
 
-const NavBar = () => {
-    return (
-        <div className="bg-green-900 text-white w-lvw p-4 flex flex-row shadow-lg justify-center">
-        <NavigationMenu>
-            <NavigationMenuList>
-                <NavigationMenuItem>
-                    <NavigationMenuLink>
-                        <NavLink to="/" className={({ isActive }) => (isActive ? "font-bold" : "")}>
-                            <Button variant="ghost" asChild>
-                                <span>Home</span>
-                            </Button>
-                        </NavLink>
-                    </NavigationMenuLink>
-                </NavigationMenuItem>
+const Navbar = () => {
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-                <NavigationMenuItem>
-                    <NavigationMenuLink>
-                        <NavLink to="/add" className={({ isActive }) => (isActive ? "font-bold" : "")}>
-                            <Button variant="ghost" asChild>
-                                <span>Add New Expense</span>
-                            </Button>
-                        </NavLink>
-                    </NavigationMenuLink>
-                </NavigationMenuItem>
+  const navlinkClassName = (path: string) => {
+    const defaultClass = 'px-8 text-white hover:bg-green-800';
+    return `${defaultClass} ` + (currentPath === path ? `font-bold` : '');
+  };
 
-                <NavigationMenuItem>
-                    <NavigationMenuLink>
-                        <NavLink to="/list" className={({ isActive }) => (isActive ? "font-bold" : "")}>
-                            <Button variant="ghost" asChild>
-                                <span>View Expense List</span>
-                            </Button>
-                        </NavLink>
-                    </NavigationMenuLink>
-                </NavigationMenuItem>
-            </NavigationMenuList>
-        </NavigationMenu>
-        </div>
-    );
+  return (
+    <nav className="flex flex-row w-lvw shadow-lg justify-center p-4 bg-green-900 text-white">
+      <NavLink to="/" className={navlinkClassName('/')}>
+        Home
+      </NavLink>
+      <NavLink to="/list" className={navlinkClassName('/list')}>
+        Expenses
+      </NavLink>
+      <NavLink to="/add" className={navlinkClassName('/add')}>
+        Add Expense
+      </NavLink>
+      <NavLink to="/transfer" className={navlinkClassName('/transfer')}>
+        New Transfer
+      </NavLink>
+    </nav>
+  );
 };
 
-export default NavBar;
+export default Navbar;

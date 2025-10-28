@@ -1,76 +1,78 @@
-import type { Expense } from "../types/Expenses";
-import { useState, useEffect } from "react";
-import ExpenseReset from "../components/ExpenseReset";
-import NavBar from "../components/NavBar";
-import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableRow,
-    TableHead,
-} from "@/components/ui/table";
-import ExpenseItem from "@/components/ExpenseItem";
+import { useContext, useEffect, useState } from 'react';
+import { PageContext } from '../App';
+import type { Expense } from '../types/Expense';
+import React from 'react';
+import ExpenseSorter from '../components/ExpenseSorter';
+import ExpenseItem from '../components/ExpenseItem';
 
-const host = import.meta.env.VITE_API_URL;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const defaultAlgo = (_a: Expense, _b: Expense) => 0; // Default no sorting
 
 const List = () => {
-    const [expenses, setExpenses] = useState<Expense[]>([]);
+  const { error, sendApiRequestandHandleError } = useContext(PageContext);
+  const [sortingAlgo, setSortingAlgo] = React.useState<typeof defaultAlgo>(() => defaultAlgo);
 
-    useEffect(() => {
-        const fetchExpenses = async () => {
-            try {
-                const response = await fetch(`${host}/api/expenses`);
-                const data = await response.json();
-                setExpenses(data);
-            } catch (error) {
-                console.error("Error fetching expenses:", error);
-            }
-        };
-        fetchExpenses();
-    }, []);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [expenses, setExpenses] = React.useState<Expense[]>([]);
 
-    const refresh = async () => {
-        const res = await fetch(`${host}/api/expenses`);
-        return await res.json();
-    };
+  // Fetch expenses from backend
+  const fetchExpenses = async () => {
+    setLoading(true);
+    const data = ((await sendApiRequestandHandleError('GET', 'expenses')) as Expense[]) || [];
+    setExpenses(data);
+    setLoading(false);
+  };
 
-    const handleReset = async () => {
-        const res = await fetch(`${host}/api/expenses/reset`, {
-            method: "POST",
-        });
-        if (!res.ok) throw new Error("Reset failed");
-        await refresh();
-        const data = await fetch(`${host}/api/expenses`).then((r) => r.json());
-        setExpenses(data);
-    };
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
 
-    return (
-        <>
-            <div className="mx-auto centered-container">
-                <NavBar />
+  const handleAlgoChange = (algo: (a: Expense, b: Expense) => number) => {
+    setSortingAlgo(() => algo); // Pay attention here, we're wrapping algo in a function because useState setter accept either a value or a function returning a value.
+  };
 
-                 <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-left">Id</TableHead>
-                <TableHead className="text-left">Date</TableHead>
-                <TableHead className="text-left">Description</TableHead>
-                <TableHead className="text-left">Payer</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {expenses.map((expense: Expense) => (
-                <ExpenseItem key={expense.id} item={expense} />
-              ))}
-            </TableBody>
-          </Table>
-                <div className="mt-4">
-                    <ExpenseReset handleReset={handleReset} />
-                </div>
-            </div>
-        </>
-    );
+  const sortedExpenses = expenses.sort(sortingAlgo);
+
+  if (loading) {
+    return <div>Loading expenses...</div>;
+  }
+
+  return (
+    <div className="w-full">
+      <h1 className="text-5xl text-center">Expense List</h1>
+
+      <div className="w-5/6 mx-auto">
+        {error && <div>Error: {error}</div>}
+
+        <h2>Expenses ({expenses.length})</h2>
+
+        {expenses.length > 0 && <ExpenseSorter setSortingAlgo={handleAlgoChange} />}
+
+        <div>
+          {sortedExpenses.length === 0 ? (
+            <p>No expenses found.</p>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="text-left">Id</th>
+                  <th className="text-left">Date</th>
+                  <th className="text-left">Description</th>
+                  <th className="text-left">Payer</th>
+                  <th className="text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedExpenses.map((expense) => (
+                  <ExpenseItem key={expense.id} expense={expense} />
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default List;

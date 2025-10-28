@@ -1,19 +1,19 @@
-import React from 'react';
-import type { Expense } from '../types/Expenses';
-import { TableCell, TableRow } from './ui/table';
+import type { Expense } from '../types/Expense';
 
-const ExpenseItem: React.FC<{ item: Expense }> = ({ item }) => {
-    return (
-        <TableRow>
-      <TableCell className="text-left">#{item.id}</TableCell>
-      <TableCell className="text-left">{item.date.split('T')[0]}</TableCell>
-      <TableCell className="text-left">{item.description}</TableCell>
-      <TableCell className="text-left">
-        Paid by <span>{item.payer}</span>
-      </TableCell>
-      <TableCell className="text-right">${item.amount.toFixed(2)}</TableCell>
-    </TableRow>
+interface ExpenseItemProps {
+  expense: Expense;
+}
+
+export default function ExpenseItem({ expense }: ExpenseItemProps) {
+  return (
+    <tr>
+      <td className="text-left">#{expense.id}</td>
+      <td className="text-left">{expense.date}</td>
+      <td className="text-left">{expense.description}</td>
+      <td className="text-left">
+        Paid by <span>{expense.payer}</span>
+      </td>
+      <td className="text-right">${expense.amount.toFixed(2)}</td>
+    </tr>
   );
-};
-
-export default ExpenseItem;
+}
