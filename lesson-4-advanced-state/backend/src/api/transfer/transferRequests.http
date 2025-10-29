@@ -1,0 +1,15 @@
+@hostname = localhost:3000
+
+### Get all transfers
+GET http://{{hostname}}/api/transfers
+Content-Type: application/json
+
+
+### Create a new transfer
+POST http://{{hostname}}/api/transfers
+Content-Type: application/json
+{
+  "amount": 5,
+  "sourceId": 1,
+  "targetId": 2
+}
